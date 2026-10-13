@@ -1,0 +1,12 @@
+index=armor-soc sourcetype=linux:audit type=USER_LOGIN
+| eval remote_ip=addr
+| eval outcome=res
+| stats
+    count(eval(outcome="failed")) as failed_logins
+    count(eval(outcome="success")) as successful_logins
+    values(acct) as accounts
+    earliest(_time) as first_seen
+    latest(_time) as last_seen
+    by remote_ip
+| where failed_logins >= 2 AND successful_logins >= 1
+| convert ctime(first_seen) ctime(last_seen)

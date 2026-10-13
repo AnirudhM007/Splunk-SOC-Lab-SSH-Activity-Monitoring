@@ -1,0 +1,15 @@
+# Focus on the source address shown in the lab screenshots and preserve event order.
+index=armor-soc sourcetype=linux:audit addr="192.168.56.103"
+(type=USER_LOGIN OR type=USER_AUTH)
+| table _time type addr acct res terminal host
+| sort _time
+
+# General event counts by audit type
+index=armor-soc sourcetype=linux:audit
+| stats count by type
+| sort -count
+
+# General counts by address, account, and result
+index=armor-soc sourcetype=linux:audit
+| stats count by addr, acct, res
+| sort -count
